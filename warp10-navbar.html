@@ -1,0 +1,189 @@
+<link rel="import" href="../polymer/polymer.html">
+<!--
+## Warp10's Navigation Bar component
+
+  It requires Bootstrap CSS & JS
+
+### Example
+
+    <wap10-navbar appname="doc" apps="{{applications}}">
+    </warp10-navbar>
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+
+<link rel="stylesheet" href="./czd-navbar-fontdata.css" />
+<dom-module id="warp10-navbar">
+  <template>
+    <style>
+      :host {
+      }
+    </style>
+    <link rel="stylesheet" href="./warp10-navbar.css" />
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{applications[appname].url}}">
+              <div class="navbar-id">
+                <div class="navbar-id-icon">
+                  <span id="icon-CityzenData" class="icon-CityzenData"></span>
+                </div>
+                <div class="navbar-id-name">
+                  Developer Portal
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <template is="dom-repeat" items="{{applications}}" as="app">
+                <template is="dom-if" if="{{app.active}}">
+                  <li class="active"><a href="{{app.url}}">{{app.text}}</a></li>
+                </template>
+                <template is="dom-if" if="{{!app.active}}">
+                  <li><a href="{{app.url}}">{{app.text}}</a></li>
+                </template>
+              </template>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+              <template is="dom-if" if="{{isUserKnown}}">
+                <li>
+                  <div class="navbar-text">
+                    <div>{{email}} <br> <a href="/logout/" class="navbar-link"><span class="glyphicon glyphicon-log-out"></span> Logout</a></div>
+                  </div>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <iron-ajax id="xhr"></iron-ajax>
+        <iron-ajax
+          id="xhr"
+          url="{{userProfileSvc}}"
+          method='GET'
+          handle-as="json"
+          on-response="_receivedUserProfile"
+          on-error="_receivedError"></iron-ajax>
+    </nav>
+    <div class="navbar-separator"> </div>
+  </template>
+  <script>
+    Polymer({
+      is: "warp10-navbar",
+      properties: {
+        /**
+         * The id of the current app
+         */
+        appname: {
+          type: String
+        },
+        /**
+         * An array of applications to use instead of by default one
+         *
+         * Example
+         *
+         *    [
+         *      {
+         *        "name": "quantum",
+         *        "text": "Quantum",
+         *        "url":  "/quantum/",
+         *        "active": false
+         *      },
+         *      {
+         *        "name": "doc",
+         *        "text": "Documentation",
+         *        "url":  "/doc/",
+         *        "active": true
+         *      }
+         *    ]
+         */
+        apps: {
+          type: Array
+        }
+      },
+      ready: function() {
+        this.userProfileSvc = "/devparadise/s/owner.profile";
+        this.isUserKnown = false;
+        this.applications = [
+          {
+            name: "devparadise",
+            text: "Console",
+            url:  "/devparadise/index",
+            active: false
+          },
+          {
+            name: "doc",
+            text: "Documentation",
+            url:  "/doc/",
+            active: false
+          },
+          {
+            name: "quantum",
+            text: "Quantum",
+            url:  "/quantum/",
+            active: false
+          },
+          {
+            name: "contact",
+            text: "Contact",
+            url:  "mailto:contact@cityzendata.com",
+            active: false
+          }
+        ]
+        this._checkUserProfile();
+        this._checkAppConf();
+        for (var i=0; i<this.applications.length; i++) {
+          if (this.appname == this.applications[i].name) {
+            this.applications[i].active = true;
+          }
+        }
+      },
+      _checkUserProfile: function() {
+        this.$.xhr.generateRequest();
+      },
+      _receivedUserProfile: function(event, ironRequest) {
+        console.debug("[warp10-navbar] Received user data",ironRequest.response);
+        if ('email' in ironRequest.response) {
+          console.debug("[warp10-navbar] Connected user detected", ironRequest.response.email)
+          this.isUserKnown = true;
+          this.email = ironRequest.response.email.trim();
+        }
+      },
+      _receivedError: function(event, ironRequest) {
+        console.debug("[warp10-navbar] No user data found", ironRequest);
+      },
+      _checkAppConf: function() {
+        if (typeof this.apps === 'undefined') {
+          return;
+        }
+        if (!this._isArray(this.apps)) {
+          console.error("Navbar configuration error: apps must be an application configuration list", this.apps);
+          return;
+        }
+        var apps = [];
+        for (var i=0; i<this.apps.length; i++) {
+          if (('name' in this.apps[i]) && ('text' in this.apps[i]) && ('url' in this.apps[i]) && ('active' in this.apps[i])) {
+            apps.push({ name: this.apps[i].name, text: this.apps[i].text, url: this.apps[i].url, active: this.apps[i].active});
+          } else {
+            console.error("Navbar configuration error: item "+i+" isn't an aplication conf item", this.apps);
+            return;
+          }
+        }
+        console.debug("External configuration read", apps);
+        this.applications = apps;
+      },
+      _isArray: function(value) {
+        return value && typeof value === 'object' && value instanceof Array && typeof value.length === 'number' && typeof value.splice === 'function' && !(value.propertyIsEnumerable('length'));
+      }
+    });
+  </script>
+</dom-module>
