@@ -1,5 +1,5 @@
 {
-  "name": "warp-navbar",
+  "name": "warp10-navbar",
   "authors": [
     "Horacio Gonzalez <horacio.gonzalez@gmail.com>"
   ],
@@ -20,6 +20,6 @@
   "dependencies": {
     "polymer": "Polymer/polymer#~1.2.0",
     "iron-ajax": "PolymerElements/iron-ajax#^1.1.0",
-    "bootstrap": "~3.3.6"
+    "polymer-bootstrap": "polymer-bootstrap#^0.1.2"
   }
 }

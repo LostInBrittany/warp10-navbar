@@ -13,14 +13,16 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 
-<link rel="stylesheet" href="./czd-navbar-fontdata.css" />
+
+<link rel="import" href="../warp10-navbar/warp10-navbar-styles.html">
+
 <dom-module id="warp10-navbar">
   <template>
     <style>
       :host {
       }
     </style>
-    <link rel="stylesheet" href="./warp10-navbar.css" />
+    <style include="warp10-navbar-styles"></style>
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
 

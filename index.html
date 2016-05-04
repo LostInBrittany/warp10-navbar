@@ -1,41 +1,48 @@
 <!doctype html>
 <html>
+
 <head>
-<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-<title>czd-navbar demo</title>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>czd-navbar demo</title>
 
 
-<link rel="icon" href="./favicon.ico" type="image/x-icon"/>
-<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon"/>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
 
-<style>
-  body {
-    background-color: #eeeeee;
-  }
-</style>
+  <style>
+    body {
+      background-color: #eeeeee;
+    }
+  </style>
 
-<script src="./dependencies/webcomponentsjs/webcomponents.js"></script>
-
-<link   rel="import" href="./dependencies/polymer/polymer.html">
-<link   rel="import" href="./dependencies/warp10-navbar/warp10-navbar.html">
-
-<link rel="stylesheet" href="./dependencies/bootstrap/dist/css/bootstrap.css" />
-<script src="./dependencies/jquery/dist/jquery.js"></script>
-<script src="./dependencies/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="../webcomponentsjs/webcomponents.js"></script>
 
 
+  <!-- Polymer Script -->
+  <script>
+    window.Polymer = window.Polymer || {};
+        window.Polymer.dom = 'shadow';
+  </script> 
 
-<body>
-  <template is="dom-bind">
 
-    <czd-navbar appname="doc" apps="{{toto}}">
-    </czd-navbar>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../warp10-navbar/warp10-navbar.html">
+  <script src="../jquery/dist/jquery.js"></script>
+  <script src="../bootstrap/dist/js/bootstrap.js"></script>
+
+
+
+  <body>
+    <template is="dom-bind">
+
+    <warp10-navbar appname="doc" apps="{{toto}}">
+    </warp10-navbar>
 
 
   </template>
 
-  <script>
-    var template = document.querySelector('template[is="dom-bind"]');
+    <script>
+      var template = document.querySelector('template[is="dom-bind"]');
     template.toto = [
         {
           name: "devparadise",
@@ -62,6 +69,8 @@
           active: false
         }
     ]
-</script>
-</body>
+
+    </script>
+  </body>
+
 </html>
