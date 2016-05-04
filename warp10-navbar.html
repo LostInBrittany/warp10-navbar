@@ -86,13 +86,17 @@
         * The name of the portal
         */
         title: {
-          type: String
+          type: String,
+          value: "Quantum",
+          observer: "_titleChanged"
         },
         /**
          * The id of the current app
          */
         appname: {
-          type: String
+          type: String,
+          value: "quantum",
+          observer: "_appnameChanged"
         },
         /**
          * An array of applications to use instead of by default one
@@ -115,48 +119,71 @@
          *    ]
          */
         apps: {
-          type: Array
+          type: Array,
+          value: function() { 
+            return [
+              {
+                name: "quantum",
+                text: "Quantum",
+                url:  "/quantum/",
+                active: false
+              },
+              {
+                name: "contact",
+                text: "Contact",
+                url:  "mailto:contact@cityzendata.com",
+                active: false
+              }
+            ]; 
+          },
+          observer: "_appsChanged"
+        },
+         /**
+          * If true, try to get the user profile  
+          */ 
+        verifyUserProfile: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * The URL to get the profile
+         */        
+        userProfileSvc: {
+          type: String,
+          value: "/devparadise/s/owner.profile"
         }
+        
       },
       ready: function() {
-        this.userProfileSvc = "/devparadise/s/owner.profile";
-        this.isUserKnown = false;
-        this.applications = [
-          {
-            name: "devparadise",
-            text: "Console",
-            url:  "/devparadise/index",
-            active: false
-          },
-          {
-            name: "doc",
-            text: "Documentation",
-            url:  "/doc/",
-            active: false
-          },
-          {
-            name: "quantum",
-            text: "Quantum",
-            url:  "/quantum/",
-            active: false
-          },
-          {
-            name: "contact",
-            text: "Contact",
-            url:  "mailto:contact@cityzendata.com",
-            active: false
-          }
-        ]
-        
-        this.title = "Quantum";
-
-        this._checkUserProfile();
+        console.debug("[warp10-navbar] ready");        
+        this.isUserKnown = false;        
+      },
+      
+      attached: function() {
+        //console.debug("[warp10-navbar] attached");
+        this._isAttached = true;
+        this._checkUserProfile();    
         this._checkAppConf();
-        for (var i=0; i<this.applications.length; i++) {
-          if (this.appname == this.applications[i].name) {
-            this.applications[i].active = true;
-          }
+      },
+      _appsChanged: function() {
+        if (!this.isAttached) {
+          return;
         }
+        //console.debug("[warp10-navbar] _appsChanged", this.apps);        
+        this._checkAppConf();
+      },
+      _appnameChanged: function() {
+        if (!this.isAttached) {
+          return;
+        }
+        //console.debug("[warp10-navbar] _appnameChanged", this.appname);      
+        this._checkAppConf();
+      },
+      _titleChanged: function() {
+        if (!this.isAttached) {
+          return;
+        }
+        //console.debug("[warp10-navbar] _titleChanged", this.title);
       },
       _checkUserProfile: function() {
         this.$.xhr.generateRequest();
@@ -191,6 +218,13 @@
         }
         console.debug("External configuration read", apps);
         this.applications = apps;
+        
+        
+        for (var i=0; i<this.applications.length; i++) {
+          if (this.appname == this.applications[i].name) {
+            this.applications[i].active = true;
+          }
+        }
       },
       _isArray: function(value) {
         return value && typeof value === 'object' && value instanceof Array && typeof value.length === 'number' && typeof value.splice === 'function' && !(value.propertyIsEnumerable('length'));
